@@ -1,0 +1,4 @@
+*.pyc
+logs
+databases
+active_config.yml
