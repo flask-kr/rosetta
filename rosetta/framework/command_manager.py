@@ -29,7 +29,7 @@ class CommandManager(object):
             def wrapper(ns):
                 return func(**dict((option_name, getattr(ns, option_name)) for option_name in option_names))
 
-            sub_parser = self.sub_parsers.add_parser(func.func_name)
+            sub_parser = self.sub_parsers.add_parser(func.func_name, help=func.func_doc)
             for option_name in option_names:
                 sub_parser.add_argument(option_name, **option_table[option_name])
             sub_parser.set_defaults(func=wrapper)
