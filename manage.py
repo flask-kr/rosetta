@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf8 -*-
+import pytest
+
 from rosetta import CommandManager
 
 command_manager = CommandManager()
@@ -21,7 +23,7 @@ def install_package(package_names):
 @command_manager.command(config_path=dict(type=str, nargs=1, help='활성화 설정 파일 경로'))
 def switch_config(config_path):
     """
-    active_onfig.yml 설정 파일을 교체합니다.
+    active_config.yml 설정 파일을 교체합니다.
     """
 
     command_manager.run_program('cp', [config_path[0], 'active_config.yml'])
@@ -66,7 +68,8 @@ def run_server(port):
     서버를 실행합니다. 기본 포트는 5000번입니다.
     """
 
-    command_manager.server_manager.run_server()
+    command_manager.server_manager.run_server(port=port)
+
 
 if __name__ == '__main__':
     import sys
