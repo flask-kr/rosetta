@@ -1,4 +1,9 @@
 *.pyc
+*.swp
+
+.idea
+
+d
 logs
 databases
 active_config.yml
