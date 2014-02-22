@@ -28,6 +28,14 @@ def switch_config(config_path):
 
     command_manager.run_program('cp', [config_path[0], 'active_config.yml'])
 
+@command_manager.command(script_path=dict(type=str, nargs=1, help='실행 스크립트 파일 경로'))
+def run_script(script_path):
+    """
+    스크립트를 실행합니다.
+    """
+
+    execfile(script_path[0], {'__name__': '__main__'})
+
 @command_manager.command()
 def run_shell():
     """
