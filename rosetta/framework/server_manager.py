@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_ext_environment import Environment
 
 class ServerManager(object):
+    instance = None
+
     class Error(Exception):
         pass
 

@@ -2,9 +2,16 @@
 # -*- coding:utf8 -*-
 import pytest
 
-from rosetta import CommandManager
+from rosetta import db, app_factory, command_manager
 
-command_manager = CommandManager()
+def create_app():
+    try:
+        return app_factory.create_main_app()
+    except Environment.Error:
+        print "#### no active config"
+        print "\t./mange.py switch_config "\
+              "rosetta/data/$(TARGET)_config.yml"
+        raise command_manager.Error('NO_ACTIVE_CONFIG')
 
 @command_manager.command(package_names=dict(type=str, nargs='+', help='파이썬 패키지 이름'))
 def install_package(package_names):
@@ -42,8 +49,8 @@ def run_shell():
     쉘을 실행합니다. app 과 db 에 접근할 수 있습니다.
     """
 
-    server_manager = command_manager.server_manager
-    command_manager.run_python_shell('Rosetta Shell', local_dict=dict(app=server_manager.app, db=server_manager.db))
+    app = app_factory.create_main_app()
+    command_manager.run_python_shell('Rosetta Shell', local_dict=dict(app=app, db=db))
 
 @command_manager.command()
 def reset_all_databases():
@@ -52,23 +59,24 @@ def reset_all_databases():
     전체 리셋 패스워드를 지정하지 않았다면 사용할 수 없습니다.
     """
 
-    server_manager = command_manager.server_manager
+    app = app_factory.create_main_app()
 
     print "#### reset all databases"
-    print "* database uri: %s" % server_manager.app.config['SQLALCHEMY_DATABASE_URI']
-    for key, value in sorted(server_manager.app.config['SQLALCHEMY_BINDS'].iteritems()):
+    print "* database uri: %s" % app.config['SQLALCHEMY_DATABASE_URI']
+    for key, value in sorted(app.config['SQLALCHEMY_BINDS'].iteritems()):
         print " * bind_key: %s uri:%s" % (key, value)
 
     print "* reset_all_password:", 
-    config_password = server_manager.app.config['RESET_ALL_PASSWORD']
+    config_password = app.config['RESET_ALL_PASSWORD']
     if not config_password:
-        raise server_manager.Error('NO_PERMISSION_TO_RESET_ALL_PASSWORD')
+        raise command_manager.Error('NO_PERMISSION_TO_RESET_ALL_PASSWORD')
 
     input_password = raw_input()
     if input_password != config_password:
-        raise server_manager.Error('WRONG_RESET_ALL_PASSWORD')
+        raise command_manager.Error('WRONG_RESET_ALL_PASSWORD')
 
-    server_manager.reset_all_databases()
+    db.drop_all()
+    db.create_all()
 
 @command_manager.command(port=dict(type=int, default=5000, help="포트 번호"))
 def run_server(port):
@@ -76,7 +84,8 @@ def run_server(port):
     서버를 실행합니다. 기본 포트는 5000번입니다.
     """
 
-    command_manager.server_manager.run_server(port=port)
+    app = app_factory.create_main_app()
+    app.run_server(port=port)
 
 
 if __name__ == '__main__':

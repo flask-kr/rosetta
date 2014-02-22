@@ -1,37 +1,29 @@
 import os
 
-from framework import Environment
-from framework import ServerManager as BaseServerManager
-from framework import CommandManager as BaseCommandManager
+from framework import db, env, command_manager
+
+from framework import Flask
+
+class ApplicationFactory(object):
+    @staticmethod
+    def __create_app(config_paths):
+        app = Flask(__name__)
+
+        env.init_app(app, __file__, config_paths)
+        env.create_all()
+
+        db.init_app(app)
+        db.app = app # http://piotr.banaszkiewicz.org/blog/2012/06/29/flask-sqlalchemy-init_app/
+        
+        db.create_all()
+        return app
+
+    def create_main_app(self):
+        return self.__create_app(config_paths=[
+                '$APP_DIR/data/base_config.yml',
+                '$PWD/active_config.yml'])
 
 os.environ['APP_DIR'] = os.path.dirname(os.path.realpath(__file__))
 
+app_factory = ApplicationFactory()
 
-class ServerManager(BaseServerManager):
-    def __init__(self):
-        super(ServerManager, self).__init__()
-        self.env.load_config_file('$APP_DIR/data/base_config.yml')
-
-
-class CommandManager(BaseCommandManager):
-    def __init__(self):
-        super(CommandManager, self).__init__()
-        self._server_manager = None
-
-    @property
-    def server_manager(self):
-        if self._server_manager is None:
-            self._server_manager = ServerManager()
-
-            try:
-                self._server_manager.env\
-                    .load_config_file('$PWD/active_config.yml')
-            except Environment.Error:
-                print "#### no active config"
-                print "\t./mange.py switch_config "\
-                      "rosetta/data/$(TARGET)_config.yml"
-                raise self.Error('NO_ACTIVE_CONFIG')
-
-            self._server_manager.create_all()
-
-        return self._server_manager

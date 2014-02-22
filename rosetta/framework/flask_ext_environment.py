@@ -13,46 +13,57 @@ class Environment(object):
     class Error(Exception):
         pass
 
-    def __init__(self, app):
-        self.app = app
-        self.app.config['DEBUG'] = True
-
-        self.app.config['LOG_DEBUG_FILE_PATH'] = os.path.expandvars("$PWD/logs/debug.log")
-        self.app.config['LOG_DEBUG_FILE_MAX_MB_SIZE'] = 100
-        self.app.config['LOG_DEBUG_BACKUP_COUNT'] = 2
-
-        self.app.config['LOG_INFO_FILE_PATH'] = os.path.expandvars("$PWD/logs/info.log")
-        self.app.config['LOG_INFO_FILE_MAX_MB_SIZE'] = 100
-        self.app.config['LOG_INFO_BACKUP_COUNT'] = 2
-
-        self.app.config['LOG_ERROR_FILE_PATH'] = os.path.expandvars("$PWD/logs/error.log")
-        self.app.config['LOG_ERROR_FILE_MAX_MB_SIZE'] = 100
-        self.app.config['LOG_ERROR_BACKUP_COUNT'] = 2
-
-        self.app.config['LOG_FORMAT'] = "%(asctime)-15s %(message)s"
-
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = self.SQLITE_URI_MEMORY
-        self.app.config['SQLALCHEMY_BINDS'] = {} 
-        self.app.config['SQLALCHEMY_ECHO'] = True
-
+    def __init__(self, app=None):
         self.log_formatter = None
+
+        if app:
+            self.init_app(app)
 
     def __repr__(self):
         return '#### environments\n%s' % '\n'.join(sorted('* %s: %s' % (key, value) for key, value in self.app.config.items()))
 
+    def __create_builtin_config_dict(self):
+        config_dict = {}
+        config_dict['DEBUG'] = True
 
-    def load_config_file(self, config_path):
+        config_dict['LOG_DEBUG_FILE_PATH'] = os.path.expandvars("$PWD/logs/debug.log")
+        config_dict['LOG_DEBUG_FILE_MAX_MB_SIZE'] = 100
+        config_dict['LOG_DEBUG_BACKUP_COUNT'] = 2
+
+        config_dict['LOG_INFO_FILE_PATH'] = os.path.expandvars("$PWD/logs/info.log")
+        config_dict['LOG_INFO_FILE_MAX_MB_SIZE'] = 100
+        config_dict['LOG_INFO_BACKUP_COUNT'] = 2
+
+        config_dict['LOG_ERROR_FILE_PATH'] = os.path.expandvars("$PWD/logs/error.log")
+        config_dict['LOG_ERROR_FILE_MAX_MB_SIZE'] = 100
+        config_dict['LOG_ERROR_BACKUP_COUNT'] = 2
+
+        config_dict['LOG_FORMAT'] = "%(asctime)-15s %(message)s"
+
+        config_dict['SQLALCHEMY_DATABASE_URI'] = self.SQLITE_URI_MEMORY
+        config_dict['SQLALCHEMY_BINDS'] = {} 
+        config_dict['SQLALCHEMY_ECHO'] = True
+        return config_dict
+
+    def init_app(self, app, app_path, config_paths):
+        self.app = app
+        self.app.config.update(self.__create_builtin_config_dict())
+
+        for config_path in config_paths:
+            self.__load_config_file(config_path)
+
+    def __load_config_file(self, config_path):
         "설정 파일을 불러온다"
 
         expanded_config_path = os.path.expandvars(config_path)
 
         try:
             with open(expanded_config_path) as config_file:
-                self.load_config_dict(yaml.load(config_file))
+                self.__load_config_dict(yaml.load(config_file))
         except IOError as e:
             raise self.Error('NOT_FOUND_CONFIG_FILE_PATH:%s' % expanded_config_path)
 
-    def load_config_dict(self, config_dict):
+    def __load_config_dict(self, config_dict):
         "설정 사전을 불러온다"
         if config_dict:
             for config_key, config_value in config_dict.iteritems():
