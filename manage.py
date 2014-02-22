@@ -49,7 +49,7 @@ def run_shell():
     쉘을 실행합니다. app 과 db 에 접근할 수 있습니다.
     """
 
-    app = app_factory.create_main_app()
+    app = create_app()
     command_manager.run_python_shell('Rosetta Shell', local_dict=dict(app=app, db=db))
 
 @command_manager.command()
@@ -59,7 +59,7 @@ def reset_all_databases():
     전체 리셋 패스워드를 지정하지 않았다면 사용할 수 없습니다.
     """
 
-    app = app_factory.create_main_app()
+    app = create_app()
 
     print "#### reset all databases"
     print "* database uri: %s" % app.config['SQLALCHEMY_DATABASE_URI']
@@ -84,7 +84,7 @@ def run_server(port):
     서버를 실행합니다. 기본 포트는 5000번입니다.
     """
 
-    app = app_factory.create_main_app()
+    app = create_app()
     app.run_server(port=port)
 
 
