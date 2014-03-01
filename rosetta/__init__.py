@@ -1,6 +1,6 @@
 import os
 
-from framework import db, env, command_manager
+from framework import db, env
 
 from framework import Flask
 
