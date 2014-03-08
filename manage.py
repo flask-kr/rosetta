@@ -2,7 +2,7 @@
 # -*- coding:utf8 -*-
 import os
 
-from rosetta import db, app_factory
+from application import db, app_factory
 
 from pypm import ProjectManager
 
