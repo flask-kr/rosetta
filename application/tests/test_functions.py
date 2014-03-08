@@ -1,10 +1,6 @@
 # -*- coding:utf8 -*-
-import pytest
-import urllib
 
 from BeautifulSoup import BeautifulSoup, NavigableString
-
-# TODO: @pytest.fixture(scope="module")
 
 def translate_html(html_data, text_dict):
     soup = BeautifulSoup(html_data)
@@ -21,6 +17,7 @@ def translate_html(html_data, text_dict):
     return soup
 
 if __name__ == '__main__':
+    # import urllib
     # html_data = urllib.urlopen(
     # 'https://github.com/liks79/flask/'
     # 'blob/docs-korean/docs/en/advanced_foreword.rst').read()
