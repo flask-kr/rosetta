@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf8 -*-
+import os
 import pytest
 
 from rosetta import db, app_factory
@@ -27,25 +28,28 @@ def install_package(package_names):
         raise CommandArgumentError('NO_PACKAGE_NAME')
 
     for package_name in package_names:
-        pm.run_program('pip', ['install', package_name])
+        pm.run_system_command('pip', ['install', package_name])
 
-    pm.run_program('pip', ['freeze', '> requirements.txt'])
+    pm.run_system_command('pip', ['freeze', '> requirements.txt'])
 
-@pm.command(config_path=dict(type=str, nargs=1, help='활성화 설정 파일 경로'))
-def switch_config(config_path):
+@pm.command(config_file_path=dict(type=str, nargs=1, help='활성화 설정 파일 경로'))
+def switch_config(config_file_path):
     """
     active_config.yml 설정 파일을 교체합니다.
     """
 
-    pm.run_program('cp', [config_path[0], 'active_config.yml'])
+    pm.run_system_command('cp', [config_file_path, 'active_config.yml'])
 
-@pm.command(script_path=dict(type=str, nargs=1, help='실행 스크립트 파일 경로'))
-def run_script(script_path):
+@pm.command(script_file_path=dict(type=str, nargs=1, help='실행 스크립트 파일 경로'))
+def run_script(script_file_path):
     """
     스크립트를 실행합니다.
     """
+    script_dir_path, script_name = os.path.split(script_file_path) 
 
-    execfile(script_path[0], {'__name__': '__main__'})
+    import sys
+    sys.path.append(script_dir_path)
+    execfile(script_file_path, {'__name__': '__main__'})
 
 @pm.command()
 def run_shell():
