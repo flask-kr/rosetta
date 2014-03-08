@@ -39,8 +39,9 @@ class Page(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
+    site_id = db.Column(db.Integer, db.ForeignKey(Site.id))
 
-    url = db.Column(db.String(80), unique=True)
+    path = db.Column(db.String(80), unique=True)
 
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
@@ -52,8 +53,8 @@ class Sentence(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    site_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    page_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    site_id = db.Column(db.Integer, db.ForeignKey(Site.id))
+    page_id = db.Column(db.Integer, db.ForeignKey(Page.id))
     
     text = db.Column(db.String(32))
 
