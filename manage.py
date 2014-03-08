@@ -3,22 +3,21 @@
 import os
 
 from rosetta import db, app_factory
-from rosetta import Environment
 
 from pypm import ProjectManager
 
 
+def __create_app(user_config_path):
+    if not os.access(user_config_path, os.R_OK):
+        print("NOT_FOUND_USER_CONFIG_PATh:%s" % user_config_path)
+        user_config_path = ''
+
+    return app_factory.create_app(
+        '$PWD/etc/configs/default_config.yml',
+        user_config_path)
+
+
 pm = ProjectManager()
-
-
-def create_app():
-    try:
-        return app_factory.create_main_app()
-    except Environment.Error:
-        print "#### no active config"
-        print "\t./mange.py switch_config "\
-              "rosetta/data/$(TARGET)_config.yml"
-        raise pm.Error('NO_ACTIVE_CONFIG')
 
 @pm.command(package_names=dict(type=str, nargs='+', help='파이썬 패키지 이름'))
 def install_package(package_names):
@@ -32,17 +31,19 @@ def install_package(package_names):
     for package_name in package_names:
         pm.run_system_command('pip', ['install', package_name])
 
-    pm.run_system_command('pip', ['freeze', '> requirements.txt'])
+    pm.run_system_command(
+        'pip', ['freeze', '> ./requirements.txt'])
 
-@pm.command(config_file_path=dict(type=str, nargs=1, help='활성화 설정 파일 경로'))
+@pm.command(config_file_path=dict(type=str, nargs=1, help='설정 파일 경로'))
 def switch_config(config_file_path):
     """
     active_config.yml 설정 파일을 교체합니다.
     """
 
-    pm.run_system_command('cp', [config_file_path, 'active_config.yml'])
+    pm.run_system_command(
+        'cp', [config_file_path, './etc/configs/user_config.yml'])
 
-@pm.command(script_file_path=dict(type=str, nargs=1, help='실행 스크립트 파일 경로'))
+@pm.command(script_file_path=dict(type=str, nargs=1, help='스크립트 파일 경로'))
 def run_script(script_file_path):
     """
     스크립트를 실행합니다.
@@ -53,23 +54,27 @@ def run_script(script_file_path):
     sys.path.append(script_dir_path)
     execfile(script_file_path, {'__name__': '__main__'})
 
-@pm.command()
-def run_shell():
+@pm.command(config_file_path=dict(type=str, flag='-c',
+                                  default='$PWD/etc/configs/user_config.yml',
+                                  help='설정 파일 경로'))
+def run_shell(config_file_path):
     """
     쉘을 실행합니다. app 과 db 에 접근할 수 있습니다.
     """
 
-    app = create_app()
+    app = __create_app(config_file_path)
     pm.run_python_shell('Rosetta Shell', local_dict=dict(app=app, db=db))
 
-@pm.command()
-def reset_all_databases():
+@pm.command(config_file_path=dict(type=str, flag='-c',
+                                  default='$PWD/etc/configs/user_config.yml',
+                                  help='설정 파일 경로'))
+def reset_all_databases(config_file_path):
     """
     모든 데이터 베이스를 리셋합니다. 만약에 대비해 패스워드를 확인합니다.
     전체 리셋 패스워드를 지정하지 않았다면 사용할 수 없습니다.
     """
 
-    app = create_app()
+    app = __create_app(config_file_path)
 
     print "#### reset all databases"
     print "* database uri: %s" % app.config['SQLALCHEMY_DATABASE_URI']
@@ -88,13 +93,16 @@ def reset_all_databases():
     db.drop_all()
     db.create_all()
 
-@pm.command(port=dict(type=int, default=5000, help="포트 번호"))
-def run_server(port):
+@pm.command(config_file_path=dict(type=str,
+                                  default='$PWD/etc/configs/user_config.yml',
+                                  help='설정 파일 경로'),
+            port=dict(type=int, default=5000, help="포트 번호"))
+def run_server(config_file_path, port):
     """
     서버를 실행합니다. 기본 포트는 5000번입니다.
     """
 
-    app = create_app()
+    app = __create_app(config_file_path)
     app.run_server(port=port)
 
 

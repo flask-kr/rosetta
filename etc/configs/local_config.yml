@@ -1,4 +1,5 @@
-SQLALCHEMY_ECHO: on
-SQLALCHEMY_DATABASE_URI: "sqlite:///$PWD/databases/dev.db"
-
 RESET_ALL_PASSWORD: "dev"
+
+SQLALCHEMY_ECHO: on
+SQLALCHEMY_DATABASE_URI: "sqlite:///$PWD/var/databases/local.db"
+

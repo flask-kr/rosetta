@@ -7,10 +7,14 @@ from framework import Flask, Environment
 
 class ApplicationFactory(object):
     @staticmethod
-    def __create_app(config_paths):
+    def create_app(default_config_path, user_config_path=''):
         app = Flask(__name__)
 
-        env.init_app(app, __file__, config_paths)
+        env.init_app(app)
+        env.load_config_file(default_config_path)
+        if user_config_path:
+            env.load_config_file(user_config_path)
+
         env.create_all()
 
         db.init_app(app)
@@ -18,11 +22,6 @@ class ApplicationFactory(object):
         
         db.create_all()
         return app
-
-    def create_main_app(self):
-        return self.__create_app(config_paths=[
-            '$APP_DIR/data/base_config.yml',
-            '$PWD/active_config.yml'])
 
 os.environ['APP_DIR'] = os.path.dirname(os.path.realpath(__file__))
 

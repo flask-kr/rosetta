@@ -1,3 +1,4 @@
+RESET_ALL_PASSWORD: ""
+
 SQLALCHEMY_ECHO: on
 SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
-

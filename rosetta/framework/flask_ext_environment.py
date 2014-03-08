@@ -45,15 +45,14 @@ class Environment(object):
         config_dict['SQLALCHEMY_ECHO'] = True
         return config_dict
 
-    def init_app(self, app, app_path, config_paths):
+    def init_app(self, app):
         self.app = app
         self.app.config.update(self.__create_builtin_config_dict())
 
-        for config_path in config_paths:
-            self.__load_config_file(config_path)
-
-    def __load_config_file(self, config_path):
-        "설정 파일을 불러온다"
+    def load_config_file(self, config_path):
+        """
+        설정 파일을 불러온다
+        """
 
         expanded_config_path = os.path.expandvars(config_path)
 
