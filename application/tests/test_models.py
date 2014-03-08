@@ -43,4 +43,4 @@ def test_translation():
     db.session.commit()
 
 if __name__ == '__main__':
-    test_users()
+    test_translation()
