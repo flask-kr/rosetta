@@ -1,7 +1,7 @@
 # -*- coding:utf8 -*-
 import pytest
 
-from application import db
+from framework import db
 from application import app_factory
 
 from application.models import *
@@ -11,14 +11,14 @@ CODE_CONFIG_DICT = {
 }
 
 @pytest.fixture(scope="module")
-def __create_app():
-    return app_factory.create_app(
+def __create_application():
+    return app_factory.create_application(
         "$PROJECT_DIR/etc/configs/default_config.yml",
-        code_config_dict=CODE_CONFIG_DICT)
+        custom_config_dict=CODE_CONFIG_DICT)
 
 
 def test_translation():
-    __create_app()
+    __create_application()
 
     user1 = User(uid='u0001', name='jaru')
     site1 = Site(url='http://site.com')
