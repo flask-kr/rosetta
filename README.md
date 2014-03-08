@@ -35,7 +35,7 @@ rosetta
 
 #### 로컬 서버 실행
 
-    (rosetta)$ ./manage.py switch_config etc/configs/local_config.yml
+    (rosetta)$ ./manage.py switch_config etc/configs/local_sqlite_config.yml
     (rosetta)$ ./manage.py run_server
 
 
