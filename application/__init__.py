@@ -23,11 +23,12 @@ class ApplicationFactory(object):
 
         db.init_app(app)
         db.app = app
-        
+
+        import models
         db.create_all()
 
-        from apis import api
-        app.register_blueprint(api)
+        import apis
+        app.register_blueprint(apis.bp)
 
         return app
 

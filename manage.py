@@ -6,15 +6,18 @@ from application import db, app_factory
 
 from pypm import ProjectManager
 
+USER_CONFIG_FILE_PATH = os.path.expandvars(
+    '$PROJECT_DIR/etc/configs/user_config.yml')
 
-def __create_app(user_config_path):
-    if not os.access(user_config_path, os.R_OK):
-        print("NOT_FOUND_USER_CONFIG_PATh:%s" % user_config_path)
-        user_config_path = ''
+
+def __create_app(user_config_file_path):
+    if not os.access(user_config_file_path, os.R_OK):
+        print("NOT_FOUND_USER_CONFIG_FILE_PATH:%s" % user_config_file_path)
+        user_config_file_path = ''
 
     return app_factory.create_app(
-        '$PWD/etc/configs/default_config.yml',
-        user_config_path)
+        '$PROJECT_DIR/etc/configs/default_config.yml',
+        user_config_file_path)
 
 
 pm = ProjectManager()
@@ -41,7 +44,7 @@ def switch_config(config_file_path):
     """
 
     pm.run_system_command(
-        'cp', [config_file_path, './etc/configs/user_config.yml'])
+        'cp', [config_file_path, USER_CONFIG_FILE_PATH])
 
 @pm.command(script_file_path=dict(type=str, nargs=1, help='스크립트 파일 경로'))
 def run_script(script_file_path):
@@ -55,7 +58,7 @@ def run_script(script_file_path):
     execfile(script_file_path, {'__name__': '__main__'})
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
-                                  default='$PWD/etc/configs/user_config.yml',
+                                  default=USER_CONFIG_FILE_PATH,
                                   help='설정 파일 경로'))
 def run_shell(config_file_path):
     """
@@ -66,7 +69,7 @@ def run_shell(config_file_path):
     pm.run_python_shell('Rosetta Shell', local_dict=dict(app=app, db=db))
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
-                                  default='$PWD/etc/configs/user_config.yml',
+                                  default=USER_CONFIG_FILE_PATH,
                                   help='설정 파일 경로'))
 def reset_all_databases(config_file_path):
     """
@@ -94,7 +97,7 @@ def reset_all_databases(config_file_path):
     db.create_all()
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
-                                  default='$PWD/etc/configs/user_config.yml',
+                                  default=USER_CONFIG_FILE_PATH,
                                   help='설정 파일 경로'),
             port=dict(type=int, flag='-p', default=5000, help="포트 번호"))
 def run_server(config_file_path, port):
