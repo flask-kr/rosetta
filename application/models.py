@@ -16,8 +16,16 @@ class User(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+    selections = db.relationship(lambda: Selection,
+                                 backref='user', lazy='dynamic')
+
+    translations = db.relationship(lambda: Translation,
+                                        backref='user', lazy='dynamic')
+
     def __repr__(self):
-        return '%s(id=%s, uid="%s", name="%s")' % (self.__class__.__name__, self.id, self.uid, self.name)
+        return '%s(id=%s, uid=%s, name=%s)' % \
+               (self.__class__.__name__,
+                self.id, repr(self.uid), repr(self.name))
 
 
 class Site(db.Model):
@@ -31,6 +39,12 @@ class Site(db.Model):
 
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
+    pages = db.relationship(lambda: Page, backref='site', lazy='dynamic')
+
+    def __repr__(self):
+        return '%s(id=%s, url="%s")' % \
+               (self.__class__.__name__, self.id, self.url)
 
 
 class Page(db.Model):
@@ -46,6 +60,12 @@ class Page(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+    sentences = db.relationship(lambda: Sentence,
+                                backref='page', lazy='dynamic')
+
+    selections = db.relationship(lambda: Selection,
+                                 backref='page', lazy='dynamic')
+
 
 class Sentence(db.Model):
     """
@@ -53,7 +73,6 @@ class Sentence(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    site_id = db.Column(db.Integer, db.ForeignKey(Site.id))
     page_id = db.Column(db.Integer, db.ForeignKey(Page.id))
     
     text = db.Column(db.String(32))
@@ -61,8 +80,18 @@ class Sentence(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+    translations = db.relationship(lambda: Translation,
+                                   backref='sentence', lazy='dynamic')
 
-class UserTranslation(db.Model):
+    selections = db.relationship(lambda: Selection,
+                                 backref='sentence', lazy='dynamic')
+
+    def __repr__(self):
+        return '%s(id=%s, text=%s)' % \
+               (self.__class__.__name__, self.id, repr(self.text))
+
+
+class Translation(db.Model):
     """
     사용자 번역 
     """
@@ -76,21 +105,39 @@ class UserTranslation(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+    selections = db.relationship(lambda: Selection,
+                                 backref='translation', lazy='dynamic')
 
-class UserSelection(db.Model):
+    def __repr__(self):
+        return '%s(id=%s, text=%s)' % \
+               (self.__class__.__name__, self.id, repr(self.text))
+
+
+class Selection(db.Model):
     """
     사용자 선택
     """
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    page_id = db.Column(db.Integer, db.ForeignKey(Page.id))
     sentence_id = db.Column(db.Integer, db.ForeignKey(Sentence.id))
-    user_translation_id = db.Column(db.Integer, db.ForeignKey(UserTranslation.id))
+    translation_id = db.Column(db.Integer, db.ForeignKey(Translation.id))
 
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+    @classmethod
+    def join_sentence_and_translation_for_page_and_user(cls, page, user):
+        return db.session.query(cls, Sentence, Translation)\
+            .filter(Sentence.page_id == page.id) \
+            .filter(cls.user_id == user.id) \
+            .filter(cls.sentence_id == Sentence.id)\
+            .filter(cls.translation_id == Translation.id)
 
 if __name__ == '__main__':
-    user = User(uid='jaru', name='Song Young-Jin')
-    print user
+    def main():
+        user = User(uid='jaru', name='Song Young-Jin')
+        print user
+
+    main()

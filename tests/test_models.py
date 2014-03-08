@@ -6,13 +6,15 @@ from application import app_factory
 
 from application.models import *
 
+CODE_CONFIG_DICT = {
+    'SQLALCHEMY_ECHO': False,
+}
+
 @pytest.fixture(scope="module")
 def __create_app():
     return app_factory.create_app(
         "$PROJECT_DIR/etc/configs/default_config.yml",
-        code_config_dict={
-            'SQLALCHEMY_ECHO': False,
-        })
+        code_config_dict=CODE_CONFIG_DICT)
 
 
 def test_translation():
@@ -20,27 +22,49 @@ def test_translation():
 
     user1 = User(uid='u0001', name='jaru')
     site1 = Site(url='http://site.com')
-    page1 = Page(path='/page', site_id=site1.id)
+    page1 = Page(path='/page', site=site1)
 
     sentence1 = Sentence(
-        site_id=site1.id, page_id=page1.id, text=u"test")
+        page=page1, text=u"test")
 
-    user_translation1 = UserTranslation(
-        user_id=user1.id, sentence_id=sentence1.id, text=u"테스트")
+    translation1 = Translation(
+        user=user1, sentence=sentence1, text=u"테스트")
 
-    user_selection1 = UserSelection(
-        user_id=user1.id,
-        sentence_id=sentence1.id,
-        user_translation_id=user_translation1.id
+    selection1 = Selection(
+        user=user1,
+        page=page1,
+        sentence=sentence1,
+        translation=translation1
     )
 
     db.session.add(user1)
     db.session.add(site1)
     db.session.add(page1)
     db.session.add(sentence1)
-    db.session.add(user_translation1)
-    db.session.add(user_selection1)
+    db.session.add(translation1)
+    db.session.add(selection1)
     db.session.commit()
 
+    site2 = Site.query.filter(Site.url == 'http://site.com').one()
+    assert(site2.pages.count() == 1)
+
+    page2 = site2.pages.filter(Page.path == '/page').one()
+    user2 = User.query.filter(User.uid == 'u0001').one()
+
+    contents2 = [
+        (sentence.text, translation.text)
+        for selection, sentence, translation in Selection
+        .join_sentence_and_translation_for_page_and_user(
+            page=page2, user=user2)
+        .all()]
+
+    assert(len(contents2) == 1)
+    assert(contents2[0] == (u"test", u"테스트"))
+
+
+
 if __name__ == '__main__':
+    CODE_CONFIG_DICT = {
+        'SQLALCHEMY_ECHO': True,
+        }
     test_translation()
