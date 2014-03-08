@@ -147,5 +147,4 @@ class Environment(object):
                 os.makedirs(sqlite_dir_path)
             
 
-env = Environment()
 
