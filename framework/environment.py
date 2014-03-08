@@ -58,11 +58,12 @@ class Environment(object):
 
         try:
             with open(expanded_config_path) as config_file:
-                self.__load_config_dict(yaml.load(config_file))
+                self.load_config_dict(yaml.load(config_file))
         except IOError as e:
-            raise self.Error('NOT_FOUND_CONFIG_FILE_PATH:%s' % expanded_config_path)
+            raise self.Error(
+                'NOT_FOUND_CONFIG_FILE_PATH:%s' % expanded_config_path)
 
-    def __load_config_dict(self, config_dict):
+    def load_config_dict(self, config_dict):
         "설정 사전을 불러온다"
         if config_dict:
             for config_key, config_value in config_dict.iteritems():
@@ -149,6 +150,9 @@ class Environment(object):
 if __name__ == '__main__':
     from flask import Flask
 
-    app = Flask(__name__)
-    env = Environment(app)
-    print repr(env)
+    def main():
+        app = Flask(__name__)
+        env = Environment(app)
+        print repr(env)
+
+    main()
