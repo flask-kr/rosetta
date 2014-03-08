@@ -93,17 +93,17 @@ def reset_all_databases(config_file_path):
     db.drop_all()
     db.create_all()
 
-@pm.command(config_file_path=dict(type=str,
+@pm.command(config_file_path=dict(type=str, flag='-c',
                                   default='$PWD/etc/configs/user_config.yml',
                                   help='설정 파일 경로'),
-            port=dict(type=int, default=5000, help="포트 번호"))
+            port=dict(type=int, flag='-p', default=5000, help="포트 번호"))
 def run_server(config_file_path, port):
     """
     서버를 실행합니다. 기본 포트는 5000번입니다.
     """
 
     app = __create_app(config_file_path)
-    app.run_server(port=port)
+    app.run(port=port)
 
 
 if __name__ == '__main__':
