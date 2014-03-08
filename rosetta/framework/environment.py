@@ -26,15 +26,15 @@ class Environment(object):
         config_dict = {}
         config_dict['DEBUG'] = True
 
-        config_dict['LOG_DEBUG_FILE_PATH'] = os.path.expandvars("$PWD/logs/debug.log")
+        config_dict['LOG_DEBUG_FILE_PATH'] = os.path.expandvars("$PWD/var/logs/debug.log")
         config_dict['LOG_DEBUG_FILE_MAX_MB_SIZE'] = 100
         config_dict['LOG_DEBUG_BACKUP_COUNT'] = 2
 
-        config_dict['LOG_INFO_FILE_PATH'] = os.path.expandvars("$PWD/logs/info.log")
+        config_dict['LOG_INFO_FILE_PATH'] = os.path.expandvars("$PWD/var/logs/info.log")
         config_dict['LOG_INFO_FILE_MAX_MB_SIZE'] = 100
         config_dict['LOG_INFO_BACKUP_COUNT'] = 2
 
-        config_dict['LOG_ERROR_FILE_PATH'] = os.path.expandvars("$PWD/logs/error.log")
+        config_dict['LOG_ERROR_FILE_PATH'] = os.path.expandvars("$PWD/var/logs/error.log")
         config_dict['LOG_ERROR_FILE_MAX_MB_SIZE'] = 100
         config_dict['LOG_ERROR_BACKUP_COUNT'] = 2
 
