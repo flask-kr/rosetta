@@ -1,26 +1,36 @@
 import os
 
-from framework import env
-from framework import db
+from flask import Flask
 
-from framework import Flask
+APPLICATION_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+PROJECT_DIR_PATH = os.path.dirname(APPLICATION_DIR_PATH)
+
+os.environ['APPLICATION_DIR'] = APPLICATION_DIR_PATH
+os.environ['PROJECT_DIR'] = PROJECT_DIR_PATH
 
 
 class ApplicationFactory(object):
     @staticmethod
-    def create_app(default_config_path, user_config_path='', code_config_dict={}):
+    def create_application(
+            default_config_file_path,
+            custom_config_file_path='',
+            custom_config_dict={}):
+
         app = Flask(__name__)
 
+        from framework import env
         env.init_app(app)
-        env.load_config_file(default_config_path)
-        if user_config_path:
-            env.load_config_file(user_config_path)
+        env.load_config_file(default_config_file_path)
 
-        if code_config_dict:
-            env.load_config_dict(code_config_dict)
+        if custom_config_file_path:
+            env.load_config_file(custom_config_file_path)
+
+        if custom_config_dict:
+            env.load_config_dict(custom_config_dict)
 
         env.create_all()
 
+        from framework import db
         db.init_app(app)
         db.app = app
 
@@ -31,12 +41,6 @@ class ApplicationFactory(object):
         app.register_blueprint(api_bp)
 
         return app
-
-APPLICATION_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-PROJECT_DIR_PATH = os.path.dirname(APPLICATION_DIR_PATH)
-
-os.environ['APPLICATION_DIR'] = APPLICATION_DIR_PATH
-os.environ['PROJECT_DIR'] = PROJECT_DIR_PATH
 
 app_factory = ApplicationFactory()
 
