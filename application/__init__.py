@@ -1,6 +1,7 @@
 import os
 
-from framework import db, env
+from framework import env
+from framework import db
 
 from framework import Flask
 
@@ -24,6 +25,10 @@ class ApplicationFactory(object):
         db.app = app
         
         db.create_all()
+
+        from apis import api
+        app.register_blueprint(api)
+
         return app
 
 APPLICATION_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
