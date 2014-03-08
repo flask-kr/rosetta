@@ -27,8 +27,8 @@ class ApplicationFactory(object):
         import models
         db.create_all()
 
-        import apis
-        app.register_blueprint(apis.bp)
+        from apis import api_bp
+        app.register_blueprint(api_bp)
 
         return app
 
