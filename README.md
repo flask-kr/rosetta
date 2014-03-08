@@ -25,17 +25,18 @@ rosetta
     $ workon rosetta
     (rosetta)$ 
 
-#### 서버 실행
+#### 전체 테스트 실행
 
-    (rosetta)$ ./manage.py run_server
+    (rosetta)$ py.test
 
 #### 예제 스크립트 실행
 
     (rosetta)$ ./manage.py run_script EXAMPLE_SCRIPT_PATH
 
-#### 전체 테스트 실행
+#### 로컬 서버 실행
 
-    (rosetta)$ py.test
+    (rosetta)$ ./manage.py switch_config etc/configs/local_config.yml
+    (rosetta)$ ./manage.py run_server
 
 
 구성 요소
