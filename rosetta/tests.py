@@ -2,22 +2,9 @@
 import pytest
 import urllib
 
-from rosetta import ServerManager
 from BeautifulSoup import BeautifulSoup, NavigableString
 
-@pytest.fixture(scope="module")
-def create_server_manager():
-    test_server_manager = ServerManager()
-
-    test_server_manager.env.load_config_file('$APP_DIR/data/test_config.yml')
-    test_server_manager.create_all()
-
-    return test_server_manager
-
-def test_server_manager():
-    server_manager = create_server_manager()
-    assert(server_manager.app is not None)
-
+# TODO: @pytest.fixture(scope="module")
 
 def translate_html(html_data, text_dict):
     soup = BeautifulSoup(html_data)
@@ -34,7 +21,9 @@ def translate_html(html_data, text_dict):
     return soup
 
 if __name__ == '__main__':
-    #html_data = urllib.urlopen('https://github.com/liks79/flask/blob/docs-korean/docs/en/advanced_foreword.rst').read()
-    #open('test.html', 'wb').write(html_data)
+    # html_data = urllib.urlopen(
+    # 'https://github.com/liks79/flask/'
+    # 'blob/docs-korean/docs/en/advanced_foreword.rst').read()
+    # open('test.html', 'wb').write(html_data)
     html_data = open('test.html', 'rb').read()
     translate_html(html_data, {u'Sign up': u'가입하기'})

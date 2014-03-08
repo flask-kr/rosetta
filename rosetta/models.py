@@ -2,6 +2,7 @@
 from framework import db
 from datetime import datetime
 
+
 class User(db.Model):
     """
     사용자
@@ -18,6 +19,7 @@ class User(db.Model):
     def __repr__(self):
         return '%s(id=%s, uid="%s", name="%s")' % (self.__class__.__name__, self.id, self.uid, self.name)
 
+
 class Site(db.Model):
     """
     사이트
@@ -30,6 +32,7 @@ class Site(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+
 class Page(db.Model):
     """
     페이지
@@ -41,6 +44,7 @@ class Page(db.Model):
 
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
 
 class Sentence(db.Model):
     """
@@ -56,6 +60,7 @@ class Sentence(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+
 class UserTranslation(db.Model):
     """
     사용자 번역 
@@ -70,6 +75,7 @@ class UserTranslation(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+
 class UserSelection(db.Model):
     """
     사용자 선택
@@ -82,6 +88,7 @@ class UserSelection(db.Model):
 
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
 
 if __name__ == '__main__':
     user = User(uid='jaru', name='Song Young-Jin')

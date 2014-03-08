@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf8 -*-
 import os
-import pytest
 
 from rosetta import db, app_factory
+from rosetta import Environment
 
 from pypm import ProjectManager
 
+
 pm = ProjectManager()
+
 
 def create_app():
     try:
@@ -25,7 +27,7 @@ def install_package(package_names):
     """
 
     if not package_names:
-        raise CommandArgumentError('NO_PACKAGE_NAME')
+        raise pm.ArgumentError('NO_PACKAGE_NAME')
 
     for package_name in package_names:
         pm.run_system_command('pip', ['install', package_name])

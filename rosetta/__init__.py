@@ -2,7 +2,8 @@ import os
 
 from framework import db, env
 
-from framework import Flask
+from framework import Flask, Environment
+
 
 class ApplicationFactory(object):
     @staticmethod
@@ -13,15 +14,15 @@ class ApplicationFactory(object):
         env.create_all()
 
         db.init_app(app)
-        db.app = app # http://piotr.banaszkiewicz.org/blog/2012/06/29/flask-sqlalchemy-init_app/
+        db.app = app
         
         db.create_all()
         return app
 
     def create_main_app(self):
         return self.__create_app(config_paths=[
-                '$APP_DIR/data/base_config.yml',
-                '$PWD/active_config.yml'])
+            '$APP_DIR/data/base_config.yml',
+            '$PWD/active_config.yml'])
 
 os.environ['APP_DIR'] = os.path.dirname(os.path.realpath(__file__))
 
