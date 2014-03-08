@@ -147,12 +147,5 @@ class Environment(object):
                 os.makedirs(sqlite_dir_path)
             
 
-if __name__ == '__main__':
-    from flask import Flask
+env = Environment()
 
-    def main():
-        app = Flask(__name__)
-        env = Environment(app)
-        print repr(env)
-
-    main()
