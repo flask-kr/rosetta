@@ -2,21 +2,26 @@
 # -*- coding:utf8 -*-
 import os
 
-from application import db, app_factory
+from framework import db
+from application import app_factory
 
 from pypm import ProjectManager
+
+
+DEFAULT_CONFIG_FILE_PATH = os.path.expandvars(
+    '$PROJECT_DIR/etc/configs/default_config.yml')
 
 USER_CONFIG_FILE_PATH = os.path.expandvars(
     '$PROJECT_DIR/etc/configs/user_config.yml')
 
 
-def __create_app(user_config_file_path):
+def __create_application(user_config_file_path):
     if not os.access(user_config_file_path, os.R_OK):
         print("NOT_FOUND_USER_CONFIG_FILE_PATH:%s" % user_config_file_path)
         user_config_file_path = ''
 
-    return app_factory.create_app(
-        '$PROJECT_DIR/etc/configs/default_config.yml',
+    return app_factory.create_application(
+        DEFAULT_CONFIG_FILE_PATH,
         user_config_file_path)
 
 
@@ -65,7 +70,7 @@ def run_shell(config_file_path):
     쉘을 실행합니다. app 과 db 에 접근할 수 있습니다.
     """
 
-    app = __create_app(config_file_path)
+    app = __create_application(config_file_path)
     pm.run_python_shell('Rosetta Shell', local_dict=dict(app=app, db=db))
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
@@ -77,7 +82,7 @@ def reset_all_databases(config_file_path):
     전체 리셋 패스워드를 지정하지 않았다면 사용할 수 없습니다.
     """
 
-    app = __create_app(config_file_path)
+    app = __create_application(config_file_path)
 
     print "#### reset all databases"
     print "* database uri: %s" % app.config['SQLALCHEMY_DATABASE_URI']
@@ -105,7 +110,7 @@ def run_server(config_file_path, port):
     서버를 실행합니다. 기본 포트는 5000번입니다.
     """
 
-    app = __create_app(config_file_path)
+    app = __create_application(config_file_path)
     app.run(port=port)
 
 
