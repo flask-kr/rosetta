@@ -37,7 +37,7 @@ def install_package(package_names):
 @pm.command(config_file_path=dict(type=str, nargs=1, help='설정 파일 경로'))
 def switch_config(config_file_path):
     """
-    active_config.yml 설정 파일을 교체합니다.
+    유저 설정 파일을 교체합니다.
     """
 
     pm.run_system_command(
