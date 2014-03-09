@@ -2,9 +2,23 @@
 import re
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy import _SignallingSession
+from flask_sqlalchemy import _SignallingSession, BaseQuery
 
 from flask_sqlalchemy import orm, partial, get_state
+
+
+class ExtQuery(BaseQuery):
+    def get_or_create(self, **kwargs):
+        old_inst = self.filter_by(**kwargs).first()
+        if old_inst:
+            return old_inst, False
+        else:
+            first_column_type = self.column_descriptions[0]['type']
+            new_inst = first_column_type(**kwargs)
+            self.session.add(new_inst)
+            return new_inst, True
+
+    BaseQuery.get_or_create = get_or_create
 
 
 class _BindingKeyPattern(object):
@@ -111,7 +125,7 @@ class Database(SQLAlchemy):
         if options is None:
             options = {}
 
-        scope_func=options.pop('scopefunc', None)
+        scope_func = options.pop('scopefunc', None)
         return orm.scoped_session(
             partial(_Session, self, **options), scopefunc=scope_func
         )
@@ -133,7 +147,8 @@ class Database(SQLAlchemy):
                 result.append(table)
             else:
                 if bind:
-                    if type(table_bind_key) is _BindingKeyPattern and table_bind_key.match(bind):
+                    if type(table_bind_key) is _BindingKeyPattern and \
+                            table_bind_key.match(bind):
                         result.append(table)
                     elif type(table_bind_key) is str and table_bind_key == bind:
                         result.append(table)
