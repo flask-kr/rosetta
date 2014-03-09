@@ -35,7 +35,8 @@ class ApplicationFactory(object):
         db.app = app
 
         import models
-        db.create_all()
+        if app.config['DB_CREATE_ALL']:
+            db.create_all()
 
         from apis import api_bp
         app.register_blueprint(api_bp)

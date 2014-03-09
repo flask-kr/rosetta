@@ -94,7 +94,7 @@ def reset_all_dbs(config_file_path):
         print " * bind_key: %s uri:%s" % (key, value)
 
     print "* reset_all_password:", 
-    config_password = app.config['RESET_ALL_PASSWORD']
+    config_password = app.config['DB_RESET_ALL_PASSWORD']
     if not config_password:
         raise pm.Error('NO_PERMISSION_TO_RESET_ALL_PASSWORD')
 
