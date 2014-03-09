@@ -142,6 +142,15 @@ def edit_db_rev(prefix):
         print 'NOT_EDITED_DB_REV:' + db_rev_pattern
 
 @pm.command(prefix=dict(type=str, nargs=1, help='DB 리비전 파일 이름 접두어'))
+def remove_db_rev(prefix):
+    db_rev_pattern = prefix + '*'
+    for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[db_rev_pattern]):
+        pm.remove_file(db_revision_file_path, is_testing=False)
+        break
+    else:
+        print 'NOT_REMOVED_DB_REV:' + db_rev_pattern
+
+@pm.command(prefix=dict(type=str, nargs=1, help='DB 리비전 파일 이름 접두어'))
 def apply_db_rev(prefix):
     db_rev_pattern = prefix + '*'
     for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[db_rev_pattern]):
