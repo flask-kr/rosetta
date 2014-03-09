@@ -102,6 +102,9 @@ def reset_all_databases(config_file_path):
     db.drop_all()
     db.create_all()
 
+    pm.remove_tree('alembic/versions', is_testing=False)
+    pm.make_directory('alembic/versions')
+
 @pm.command(config_file_path=dict(type=str, flag='-c',
                                   default=USER_CONFIG_FILE_PATH,
                                   help='설정 파일 경로'),
