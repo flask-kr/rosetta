@@ -215,7 +215,7 @@ def run_server(config_hint, port):
 @pm.command(config_hint=dict(type=str, flag='-c',
                              default=USER_CONFIG_FILE_PATH,
                              help='설정 파일 경로'),
-            locale_dir_path=dict(type=str, flag='-b',
+            locale_dir_path=dict(type=str, flag='-l',
                                  default=EXAMPLE_DATA_LOCALE_DIR_PATH,
                                  help='로케일 디렉토리 경로'),
             po_hints=dict(type=str, nargs='+', help='번역 파일 경로들'))
