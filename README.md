@@ -83,3 +83,49 @@ rosetta
 
     >>> from application.models import *
     >>> User.query.all() 
+
+#### 번역 직접 입력
+
+테스트나 마이그레이션을 위해 PO 번역 파일을 데이터 베이스에 입력합니다. 설정 적용은 서버와 동일합니다.
+
+    (rosetta)$ ./manage.py insert_po examples/data/locales/ko_KR/github_mitsuhiko_flask_blob_master_docs_advanced_foreword@liks79.po
+
+파일명을 와일드 카드로도 입력할 수 있습니다.
+
+    (rosetta)$ ./manage.py insert_po github*liks79* -l examples
+
+PO 전체 형식은 다음과 같습니다.
+
+    #
+    msgid ""
+    msgstr ""
+    "Project-Id-Version: SCHEME://SOURCE_NETLOC/DIR\n"
+    "Report-Msgid-Bugs-To: SCHEME://ROSETTA_NETLOC/DIR\n"
+    "POT-Creation-Date: YYYY-mm-dd HH:MM+ZZZZ\n"
+    "PO-Revision-Date: YYYY-mm-dd HH:MM+ZZZZ\n"
+    "Last-Translator: NAME <EMAIL_ID@NETLOC>\n"
+    "Language-Team: LANGUAGE (SCHEME://TRANSLATION_NETLOCK/DIR)\n"
+    "MIME-Version: 1.0\n"
+    "Content-Type: text/plain; charset=utf-8\n"
+    "Content-Transfer-Encoding: 8bit\n"
+
+    #: FILE.rst:POS
+    msgid "SOURCE_LANGAUGE_SENTENCE"
+    msgstr "TARGET_LANGAUGE_SENTENCE"
+
+PO 최소 형식 예제은 다음과 같습니다.
+
+    #
+    msgid ""
+    msgstr ""
+    "Project-Id-Version: http://flask.pocoo.org/\n"
+    "Last-Translator: Song Young-Jin <jaru@mail.com>\n"
+    "Language-Team: Korean\n"
+    "MIME-Version: 1.0\n"
+    "Content-Type: text/plain; charset=utf-8\n"
+    "Content-Transfer-Encoding: 8bit\n"
+
+    #: index:
+    msgid "Flask is Fun"
+    msgstr "플라스크는 재밌습니다"
+
