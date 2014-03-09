@@ -232,11 +232,9 @@ def insert_po(config_hint, locale_dir_path, po_hints):
     import email.utils
     from urlparse import urlparse, urlunsplit
 
-    po_file_paths = []
-    for po_hint in po_hints:
-        po_file_paths += list(pm.find_file_path_iter(
-            base_dir_path=locale_dir_path,
-            filter_file_name=FilterPattern(po_hint)))
+    po_file_paths = list(pm.find_file_path_iter(
+        base_dir_path=locale_dir_path,
+        filter_file_name=FilterPattern(po_hints)))
 
     from application.models import Site, Page, Sentence
     from application.models import User, Translation, Selection
@@ -274,8 +272,8 @@ def insert_po(config_hint, locale_dir_path, po_hints):
         db.session.commit()
 
 if __name__ == '__main__':
-    if 1:
-        pm.run_command(['insert_db_po', '*liks*.po'])
+    if 0:
+        pm.run_command(['insert_po', '*liks*.po'])
     else:
         import sys
         pm.run_command(sys.argv[1:])
