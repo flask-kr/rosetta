@@ -122,6 +122,7 @@ class Translation(db.Model):
                 repr(self.user),
                 repr(self.sentence))
 
+
 class Selection(db.Model):
     """
     사용자 선택
