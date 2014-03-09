@@ -117,6 +117,21 @@ def connect_db(config_file_path):
     else:
         print 'NOT_SUPPORT_DB_SCHEME:', db_uri.scheme
 
+
+@pm.command(title=dict(type=str, nargs=1, help='DB 리비전 제목'))
+def make_db_rev():
+    pm.run_system_command('alembic', ['revision', '--autogenerate', '-m', title])
+
+@pm.command()
+def list_db_revs():
+    pm.run_system_command('ls', ['alembic/versions'])
+
+@pm.command(prefix=dict(type=str, nargs=1, help='DB 리비전 파일 이름 접두어'))
+def edit_db_rev():
+    for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[prefix + '*']):
+        pm.run_system_command('$EDITOR', [db_revision_file_path])
+        break
+
 @pm.command(config_file_path=dict(type=str, flag='-c',
                                   default=USER_CONFIG_FILE_PATH,
                                   help='설정 파일 경로'),
