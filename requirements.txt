@@ -2,12 +2,15 @@ BeautifulSoup==3.2.1
 Flask==0.10.1
 Flask-SQLAlchemy==1.0
 Jinja2==2.7.2
+Mako==0.9.1
 MarkupSafe==0.18
 PyYAML==3.10
 SQLAlchemy==0.9.2
 Werkzeug==0.9.4
+alembic==0.6.3
 enum34==0.9.23
 itsdangerous==0.23
+polib==1.0.4
 py==1.4.20
 pytest==2.5.2
 wsgiref==0.1.2
