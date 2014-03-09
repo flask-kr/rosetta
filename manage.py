@@ -119,7 +119,7 @@ def connect_db(config_file_path):
 
 
 @pm.command(title=dict(type=str, nargs=1, help='DB 리비전 제목'))
-def make_db_rev():
+def make_db_rev(title):
     pm.run_system_command('alembic', ['revision', '--autogenerate', '-m', title])
 
 @pm.command()
@@ -127,7 +127,7 @@ def list_db_revs():
     pm.run_system_command('ls', ['alembic/versions'])
 
 @pm.command(prefix=dict(type=str, nargs=1, help='DB 리비전 파일 이름 접두어'))
-def edit_db_rev():
+def edit_db_rev(prefix):
     for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[prefix + '*']):
         pm.run_system_command('$EDITOR', [db_revision_file_path])
         break
