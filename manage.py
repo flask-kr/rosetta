@@ -15,6 +15,8 @@ DEFAULT_CONFIG_FILE_PATH = os.path.expandvars(
 USER_CONFIG_FILE_PATH = os.path.expandvars(
     '$PROJECT_DIR/etc/configs/user_config.yml')
 
+ALEMBIC_CONFIG_FILE_PATH = os.path.expandvars(
+    '$PROJECT_DIR/alembic.ini')
 
 def create_application(custom_config_file_path=USER_CONFIG_FILE_PATH):
     if os.access(custom_config_file_path, os.R_OK):
@@ -103,8 +105,12 @@ def reset_all_dbs(config_file_path):
     db.drop_all()
     db.create_all()
 
-    pm.remove_tree('alembic/versions', is_testing=False)
-    pm.make_directory('alembic/versions')
+    from alembic.config import Config
+    alembic_config = Config(ALEMBIC_CONFIG_FILE_PATH)
+
+    from alembic import command
+    command.stamp(alembic_config, "head")
+
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
                                   default=USER_CONFIG_FILE_PATH,
