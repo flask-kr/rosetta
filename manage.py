@@ -113,7 +113,7 @@ def connect_db(config_file_path):
     app = create_application(config_file_path)
     db_uri = urlparse(app.config['SQLALCHEMY_DATABASE_URI'])
     if db_uri.scheme == 'sqlite':
-        pm.run_system_command('sqlite3', [os.path.expandvars('$PROJECT_DIR' + db_uri.path)])
+        pm.run_system_command('sqlite3', [db_uri.path])
     else:
         print 'NOT_SUPPORT_DB_SCHEME:', db_uri.scheme
 
