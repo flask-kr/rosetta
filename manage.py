@@ -4,9 +4,10 @@ import os
 
 from framework import db
 from application import app_factory
+
 from urlparse import urlparse
 
-from pypm import ProjectManager
+from pypm import ProjectManager, FilterPattern
 
 CONFIG_DIR_PATH = os.path.expandvars(
     '$PROJECT_DIR/etc/configs')
@@ -22,6 +23,9 @@ ALEMBIC_CONFIG_FILE_PATH = os.path.expandvars(
 
 ALEMBIC_REVISION_DIR_PATH = os.path.expandvars(
     '$PROJECT_DIR/alembic/versions')
+
+EXAMPLE_DATA_LOCALE_DIR_PATH = os.path.expandvars(
+    '$PROJECT_DIR/examples/data/locales')
 
 
 def create_application(custom_config_file_path=USER_CONFIG_FILE_PATH):
@@ -125,7 +129,9 @@ def reset_all_dbs(config_hint):
     print "* reset_all_password:", 
     config_password = app.config['DB_RESET_ALL_PASSWORD']
     if not config_password:
-        raise pm.Error('NOT_FOUND_TO_DB_RESET_ALL_PASSWORD_IN_CONFIG_PATH:' + config_file_path)
+        raise pm.Error(
+            'NOT_FOUND_TO_DB_RESET_ALL_PASSWORD_IN_CONFIG_PATH:' +
+            config_file_path)
 
     input_password = raw_input()
     if input_password != config_password:
@@ -201,10 +207,75 @@ def run_server(config_hint, port):
 
     config_file_path = pm.smart_find_file_path(
         config_hint, base_dir_path=CONFIG_DIR_PATH)
+
     app = create_application(config_file_path)
     app.run(port=port)
 
 
+@pm.command(config_hint=dict(type=str, flag='-c',
+                             default=USER_CONFIG_FILE_PATH,
+                             help='설정 파일 경로'),
+            locale_dir_path=dict(type=str, flag='-b',
+                                 default=EXAMPLE_DATA_LOCALE_DIR_PATH,
+                                 help='로케일 디렉토리 경로'),
+            po_hints=dict(type=str, nargs='+', help='번역 파일 경로들'))
+def insert_po(config_hint, locale_dir_path, po_hints):
+    """
+    po 번역 파일을 데이터 베이스에 추가합니다.
+    """
+    config_file_path = pm.smart_find_file_path(
+        config_hint, base_dir_path=CONFIG_DIR_PATH)
+
+    create_application(config_file_path)
+
+    import polib
+    import email.utils
+    from urlparse import urlparse, urlunsplit
+
+    po_file_paths = []
+    for po_hint in po_hints:
+        po_file_paths += list(pm.find_file_path_iter(
+            base_dir_path=locale_dir_path,
+            filter_file_name=FilterPattern(po_hint)))
+
+    from application.models import Site, Page, Sentence
+    from application.models import User, Translation, Selection
+    for po_file_path in po_file_paths:
+        print "insert_database_from_po_file:", po_file_path
+
+        po = polib.pofile(po_file_path)
+        site_url = urlparse(po.metadata['Project-Id-Version'])
+        site, is_site_created = Site.query\
+            .get_or_create(url=urlunsplit(
+            (site_url.scheme, site_url.netloc, '', '', '')))
+
+        page, is_page_created = Page.query\
+            .get_or_create(path=site_url.path, site=site)
+
+        user_name, user_email = email.utils\
+            .parseaddr(po.metadata['Last-Translator'])
+        user, is_user_created = User.query\
+            .get_or_create(uid=user_email, name=user_name)
+
+        for entry in po:
+            sentence, is_sentence_created = Sentence.query\
+                .get_or_create(text=entry.msgid, page=page)
+
+            translation, is_translation_created = Translation.query\
+                .get_or_create(text=entry.msgstr,
+                               sentence=sentence,
+                               user=user)
+
+            selection, is_selection_created = Selection.query\
+                .get_or_create(translation=translation,
+                               sentence=sentence,
+                               user=user)
+
+        db.session.commit()
+
 if __name__ == '__main__':
-    import sys
-    pm.run_command(sys.argv[1:])
+    if 1:
+        pm.run_command(['insert_db_po', '*liks*.po'])
+    else:
+        import sys
+        pm.run_command(sys.argv[1:])
