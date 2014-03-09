@@ -128,9 +128,22 @@ def list_db_revs():
 
 @pm.command(prefix=dict(type=str, nargs=1, help='DB 리비전 파일 이름 접두어'))
 def edit_db_rev(prefix):
-    for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[prefix + '*']):
+    db_rev_pattern = prefix + '*'
+    for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[db_rev_pattern]):
         pm.run_system_command('$EDITOR', [db_revision_file_path])
         break
+    else:
+        print 'NOT_EDITED_DB_REV:' + db_rev_pattern
+
+@pm.command(prefix=dict(type=str, nargs=1, help='DB 리비전 파일 이름 접두어'))
+def apply_db_rev(prefix):
+    db_rev_pattern = prefix + '*'
+    for db_revision_file_path in pm.find_file_path_iter('alembic/versions', path_patterns=[db_rev_pattern]):
+        db_revision_file_name = os.path.basename(db_revision_file_path).split('_')[0]
+        pm.run_system_command('alembic', ['upgrade', db_revision_file_name])
+        break
+    else:
+        print 'NOT_APPLIED_DB_REV:' + db_rev_pattern
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
                                   default=USER_CONFIG_FILE_PATH,
