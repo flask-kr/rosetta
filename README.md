@@ -35,7 +35,7 @@ rosetta
 
 #### 로컬 설정 적용
 
-유저 설정을 localhost, sqlite3 를 사용하는 서버 설정 파일로 변경합니다. 
+유저 설정을 localhost, sqlite3 를 사용하는 서버 설정으로 변경합니다. 
 유저 설정은 `etc/configs/user_config.yml` 로 저장되며 Git 버전 관리에 포함되지 않습니다.
 
     (rosetta)$ ./manage.py switch_config etc/configs/local_sqlite_config.yml
