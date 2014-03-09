@@ -1,0 +1,17 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: https://github.com/mitsuhiko/flask/blob/master/docs/advanced_foreword.rst\n"
+"Report-Msgid-Bugs-To: http://rosetta\n"
+"POT-Creation-Date: 2007-10-18 14:00+0100\n"
+"PO-Revision-Date: 2007-10-18 14:00+0100\n"
+"Last-Translator: Jou Sung-Shik <liks79@gmail.com>\n"
+"Language-Team: Korean (https://github.com/liks79/flask/blob/docs-korean/docs/kr/advanced_foreword.rst)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: advanced_foreword.rst:1
+msgid "Foreword for Experienced Programmers"
+msgstr "경험있는 프로그래머를 위한 머릿글"
+
