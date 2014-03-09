@@ -20,6 +20,8 @@ def __create_application():
 def test_translation():
     __create_application()
 
+    db.create_all()
+
     user1 = User(uid='u0001', name='jaru')
     site1 = Site(url='http://site.com')
     page1 = Page(path='/page', site=site1)
@@ -32,7 +34,6 @@ def test_translation():
 
     selection1 = Selection(
         user=user1,
-        page=page1,
         sentence=sentence1,
         translation=translation1
     )
