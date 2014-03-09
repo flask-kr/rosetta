@@ -20,7 +20,7 @@ class User(db.Model):
                                  backref='user', lazy='dynamic')
 
     translations = db.relationship(lambda: Translation,
-                                        backref='user', lazy='dynamic')
+                                   backref='user', lazy='dynamic')
 
     def __repr__(self):
         return '%s(id=%s, uid=%s, name=%s)' % \
@@ -43,8 +43,8 @@ class Site(db.Model):
     pages = db.relationship(lambda: Page, backref='site', lazy='dynamic')
 
     def __repr__(self):
-        return '%s(id=%s, url="%s")' % \
-               (self.__class__.__name__, self.id, self.url)
+        return '%s(id=%s, url=%s)' % \
+               (self.__class__.__name__, self.id, repr(self.url))
 
 
 class Page(db.Model):
@@ -65,6 +65,11 @@ class Page(db.Model):
 
     selections = db.relationship(lambda: Selection,
                                  backref='page', lazy='dynamic')
+
+    def __repr__(self):
+        return '%s(id=%s, path=%s, site=%s)' % \
+               (self.__class__.__name__,
+                self.id, repr(self.path), repr(self.site))
 
 
 class Sentence(db.Model):
@@ -87,8 +92,11 @@ class Sentence(db.Model):
                                  backref='sentence', lazy='dynamic')
 
     def __repr__(self):
-        return '%s(id=%s, text=%s)' % \
-               (self.__class__.__name__, self.id, repr(self.text))
+        return '%s(id=%s, text=%s, page=%s)' % \
+               (self.__class__.__name__,
+                self.id,
+                repr(self.text),
+                repr(self.page))
 
 
 class Translation(db.Model):
@@ -109,8 +117,12 @@ class Translation(db.Model):
                                  backref='translation', lazy='dynamic')
 
     def __repr__(self):
-        return '%s(id=%s, text=%s)' % \
-               (self.__class__.__name__, self.id, repr(self.text))
+        return '%s(id=%s, text=%s, user=%s, sentence=%s)' % \
+               (self.__class__.__name__,
+                self.id,
+                repr(self.text),
+                repr(self.user),
+                repr(self.sentence))
 
 
 class Selection(db.Model):
@@ -126,6 +138,14 @@ class Selection(db.Model):
 
     ctime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     mtime = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
+    def __repr__(self):
+        return '%s(id=%s, user=%s, sentence=%s, translation=%s)' % \
+               (self.__class__.__name__,
+                self.id,
+                repr(self.user),
+                repr(self.sentence),
+                repr(self.translation))
 
     @classmethod
     def join_sentence_and_translation_for_page_and_user(cls, page, user):
