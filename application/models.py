@@ -124,7 +124,6 @@ class Translation(db.Model):
                 repr(self.user),
                 repr(self.sentence))
 
-
 class Selection(db.Model):
     """
     사용자 선택
@@ -132,7 +131,6 @@ class Selection(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    page_id = db.Column(db.Integer, db.ForeignKey(Page.id))
     sentence_id = db.Column(db.Integer, db.ForeignKey(Sentence.id))
     translation_id = db.Column(db.Integer, db.ForeignKey(Translation.id))
 
