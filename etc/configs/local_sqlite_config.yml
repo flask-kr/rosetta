@@ -1,4 +1,4 @@
-RESET_ALL_PASSWORD: "dev"
+DB_RESET_ALL_PASSWORD: "local"
 
 SQLALCHEMY_ECHO: on
 SQLALCHEMY_DATABASE_URI: "sqlite:///$PROJECT_DIR/var/databases/local.db"
