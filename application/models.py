@@ -63,8 +63,6 @@ class Page(db.Model):
     sentences = db.relationship(lambda: Sentence,
                                 backref='page', lazy='dynamic')
 
-    selections = db.relationship(lambda: Selection,
-                                 backref='page', lazy='dynamic')
 
     def __repr__(self):
         return '%s(id=%s, path=%s, site=%s)' % \
