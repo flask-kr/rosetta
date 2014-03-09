@@ -1,7 +1,12 @@
 import pytest
 
-from framework.core.regexprs import EMAIL_REG_EXPR
+import email.utils
 
 
 def test_email():
-    print EMAIL_REG_EXPR.match('name@site.com')
+    assert(email.utils.parseaddr
+           ('first_name last_name <id@site.com>') ==
+           ('first_name last_name', 'id@site.com'))
+
+if __name__ == '__main__':
+    test_email()
