@@ -4,6 +4,7 @@ import os
 
 from framework import db
 from application import app_factory
+from urlparse import urlparse
 
 from pypm import ProjectManager
 
@@ -77,7 +78,7 @@ def run_shell(config_file_path):
 @pm.command(config_file_path=dict(type=str, flag='-c',
                                   default=USER_CONFIG_FILE_PATH,
                                   help='설정 파일 경로'))
-def reset_all_databases(config_file_path):
+def reset_all_dbs(config_file_path):
     """
     모든 데이터 베이스를 리셋합니다. 만약에 대비해 패스워드를 확인합니다.
     전체 리셋 패스워드를 지정하지 않았다면 사용할 수 없습니다.
@@ -104,6 +105,17 @@ def reset_all_databases(config_file_path):
 
     pm.remove_tree('alembic/versions', is_testing=False)
     pm.make_directory('alembic/versions')
+
+@pm.command(config_file_path=dict(type=str, flag='-c',
+                                  default=USER_CONFIG_FILE_PATH,
+                                  help='설정 파일 경로'))
+def connect_db(config_file_path):
+    app = create_application(config_file_path)
+    db_uri = urlparse(app.config['SQLALCHEMY_DATABASE_URI'])
+    if db_uri.scheme == 'sqlite':
+        pm.run_system_command('sqlite3', [os.path.expandvars('$PROJECT_DIR' + db_uri.path)])
+    else:
+        print 'NOT_SUPPORT_DB_SCHEME:', db_uri.scheme
 
 @pm.command(config_file_path=dict(type=str, flag='-c',
                                   default=USER_CONFIG_FILE_PATH,
