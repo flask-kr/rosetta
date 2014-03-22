@@ -209,6 +209,9 @@ def run_server(config_hint, port):
         config_hint, base_dir_path=CONFIG_DIR_PATH)
 
     app = create_application(config_file_path)
+
+    from application.apis import api_bp
+    app.register_blueprint(api_bp)
     app.run(port=port)
 
 
@@ -284,16 +287,16 @@ def translate(config_hint, texts):
 
     from application.models import Sentence
 
-    for text in texts:
-        sentence = Sentence.query.filter_by(text=text).first()
-        print "original:", text
+    sentences = Sentence.query.filter(Sentence.text.in_(texts)).all()
+    for sentence in sentences:
+        print "original:", sentence.text
         for translation in sentence.translations:
             print "translation:", translation.text
         print ''
 
 
 if __name__ == '__main__':
-    if 1:
+    if 0:
         pm.run_command(['translate', 'Foreword for Experienced Programmers'])
     else:
         import sys

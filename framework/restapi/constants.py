@@ -14,10 +14,8 @@ class APIStatus(object):
 
     def marshal(self):
         return {
-            'status': {
-                'code': int(self.code),
-                'memo': self.memo,
-            }
+            'code': int(self.code),
+            'memo': self.memo,
         }
 
 
