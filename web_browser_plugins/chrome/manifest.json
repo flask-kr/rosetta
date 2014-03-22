@@ -10,8 +10,8 @@
   "content_scripts" : [
       {
         "js": [
-            "jquery-1.10.2.min.js"
-            "translator.js"
+            "jquery-1.10.2.min.js",
+            "html_text_extractor.js"
         ],
         "matches": [
             "http://*/*",
