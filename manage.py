@@ -271,9 +271,30 @@ def insert_po(config_hint, locale_dir_path, po_hints):
 
         db.session.commit()
 
+
+@pm.command(config_hint=dict(type=str, flag='-c',
+                             default=USER_CONFIG_FILE_PATH,
+                             help='설정 파일 경로'),
+            texts=dict(type=str, nargs='+', help='원문 문장들'))
+def translate(config_hint, texts):
+    config_file_path = pm.smart_find_file_path(
+        config_hint, base_dir_path=CONFIG_DIR_PATH)
+
+    create_application(config_file_path)
+
+    from application.models import Sentence
+
+    for text in texts:
+        sentence = Sentence.query.filter_by(text=text).first()
+        print "original:", text
+        for translation in sentence.translations:
+            print "translation:", translation.text
+        print ''
+
+
 if __name__ == '__main__':
-    if 0:
-        pm.run_command(['insert_po', '*liks*.po'])
+    if 1:
+        pm.run_command(['translate', 'Foreword for Experienced Programmers'])
     else:
         import sys
         pm.run_command(sys.argv[1:])
