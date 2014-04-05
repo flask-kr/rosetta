@@ -87,10 +87,7 @@ rosetta
 #### 번역 직접 입력
 
 테스트나 마이그레이션을 위해 PO 번역 파일을 데이터 베이스에 입력합니다. 설정 적용은 서버와 동일합니다.
-
-    (rosetta)$ ./manage.py insert_po examples/data/locales/ko_KR/github_mitsuhiko_flask_blob_master_docs_advanced_foreword@liks79.po
-
-파일명을 와일드 카드로도 입력할 수 있습니다.
+파일명은 와일드 카드로 입력합니다.
 
     (rosetta)$ ./manage.py insert_po github*liks79* -l examples
 
