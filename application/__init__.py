@@ -41,6 +41,10 @@ class ApplicationFactory(object):
         from apis import api_bp
         app.register_blueprint(api_bp)
 
+        @app.route('/')
+        def get_home():
+            return 'rosetta service'
+
         return app
 
 app_factory = ApplicationFactory()
