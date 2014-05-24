@@ -8,9 +8,12 @@ from framework.restapi.constants import API_STATUS_OK
 
 api_bp = APIBlueprint('api', __name__, url_prefix='/api')
 
+
 @api_bp.route('/')
 def get_status():
-    return api_bp.make_response(status=API_STATUS_OK)
+    sources = request.args['sources']
+    return api_bp.make_response(status=API_STATUS_OK, outputs=sources)
+
 
 @api_bp.route('/translations', methods=['GET'])
 def get_translations():
