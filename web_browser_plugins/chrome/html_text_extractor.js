@@ -23,6 +23,7 @@ function collectTextNodes(tag, element, items) {
 }
 
 function reprElement(element) {
+
     var items = [];
     collectTextNodes('', element, items);
 
@@ -34,7 +35,31 @@ function reprElement(element) {
     return texts.join('\n---------------\n');
 }
 
-chrome.extension.sendMessage({
-    action: "onTextExtracted",
-    source: reprElement(document)
-});
+function translate(source) {
+    var items = [];
+    collectTextNodes('', source, items);
+
+    var datas = []
+    for (var i = 0; i != items.length; i++ ) {
+        datas.push({
+            'index': i,
+            'tag': items[i].tag,
+            'text': items[i].text
+        });
+    }
+
+    $.getJSON(
+        "http://localhost:5000/api/",
+        {
+            'sources': JSON.stringify(datas),
+        },
+        function (data) {
+            reprDocument = data["status"]["memo"];
+            chrome.extension.sendMessage({
+                action: "onTextExtracted",
+                source: reprDocument
+            });
+    });
+}
+
+translate(document);

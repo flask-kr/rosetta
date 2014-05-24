@@ -4,7 +4,7 @@ chrome.extension.onMessage.addListener(function(request, sender) {
     }
 });
 
-function onWindowLoad() {
+function onWindowLoaded() {
     chrome.tabs.executeScript(null, {
             file: "html_text_extractor.js"
         }, function() {
@@ -16,5 +16,5 @@ function onWindowLoad() {
         });
 }
 
-window.onload = onWindowLoad;
+window.onload = onWindowLoaded;
 
