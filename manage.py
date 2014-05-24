@@ -212,8 +212,16 @@ def run_server(config_hint, port):
 
     from application.apis import api_bp
     app.register_blueprint(api_bp)
-    app.run(port=port)
 
+    if os.access('__selfsigned', os.R_OK):
+        from OpenSSL import SSL
+        context = SSL.Context(SSL.SSLv23_METHOD)
+        context.use_privatekey_file('__selfsigned/rosetta.key')
+        context.use_certificate_file('__selfsigned/rosetta.crt')
+
+        app.run(port=port, ssl_context=context)
+    else:
+        app.run(port=port)
 
 @pm.command(config_hint=dict(type=str, flag='-c',
                              default=USER_CONFIG_FILE_PATH,
@@ -314,6 +322,12 @@ def make_selfsigned_certificate(name, num_bits):
         '-in %s.csr' % name,
         '-out %s.crt' % name])
 
+    print_title("decrypt private key")
+    pm.run_system_command('openssl', [
+        'rsa',
+        '-in %s.key' % name,
+        '-out %s.key' % name])
+        
 
 def print_title(title, line_char='-'):
     print 
