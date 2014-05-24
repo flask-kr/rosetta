@@ -295,6 +295,31 @@ def translate(config_hint, texts):
         print ''
 
 
+@pm.command(name=dict(type=str, help='파일 이름'),
+           num_bits=dict(type=int, flag='-n', default=1024, help='암호하 비트 개수'))
+def make_selfsigned_certificate(name, num_bits):
+    print_title("private key")
+    pm.run_system_command('openssl', [
+        'genrsa', '-des3', '-out %s.key' % name, '%d' % num_bits])
+
+    print_title("certificate request")
+    pm.run_system_command('openssl', [
+        'req', '-new', '-key %s.key' % name, '-out %s.csr' % name])
+
+    print_title("certificate generating")
+    pm.run_system_command('openssl', [
+        'req', 
+        '-x509', '-nodes', '-sha1', '-days 365',
+        '-key %s.key' % name,
+        '-in %s.csr' % name,
+        '-out %s.crt' % name])
+
+
+def print_title(title, line_char='-'):
+    print 
+    print title
+    print line_char * len(title)
+
 if __name__ == '__main__':
     if 0:
         pm.run_command(['translate', 'Foreword for Experienced Programmers'])
